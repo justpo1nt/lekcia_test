@@ -41,10 +41,16 @@ user_t* login(const char* username, const char* password) {
     return NULL;
 }
 
+int min_door_level = 3;
 int door_state = 0;
 
-void process_cmd(const char* cmd) {
+void process_cmd(const user_t* user, const char* cmd) {
     if (strcmp(cmd, "door") == 0) {
+        if (min_door_level > user->level) {
+            printf("Nemas dostatocne prava\n");
+            return;
+        }
+
         if (door_state) {
             printf("Dvere otvorene\n");
         } else {
@@ -81,7 +87,7 @@ int main(int argc, const char** args) {
     while (strcmp(command, "exit") != 0) {
         printf("> ");
         scanf("%128s", command);
-        process_cmd(command);
+        process_cmd(user, command);
     }
 
     return 0;
