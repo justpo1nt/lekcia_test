@@ -46,11 +46,11 @@ user_t* login(const char* username, const char* password) {
 int min_door_level = 3;
 int door_state = 0;
 
-void process_cmd(const user_t* user, const char* cmd) {
+int process_cmd(const user_t* user, const char* cmd) {
     if (strcmp(cmd, "door") == 0) {
         if (min_door_level > user->level) {
             printf("Nemas dostatocne prava\n");
-            return;
+            return 1;
         }
 
         if (door_state) {
@@ -59,10 +59,21 @@ void process_cmd(const user_t* user, const char* cmd) {
             printf("Dvere zatvorene\n");
         }
         door_state = !door_state;
+
+        return 0;
     }
+
     if (strcmp(cmd, "help") == 0) {
         printf("exit - Zatvorit program\n");
         printf("door - Otvor dvere\n");
+
+        return 0;
+    }
+
+    if (strcmp(cmd, "exit") == 0) {
+        printf("exit");
+
+        return 1;
     }
 }
 
@@ -71,9 +82,9 @@ int main(int argc, const char** args) {
     const char pass_buffer[32] = {0};
 
     printf("Zadajte meno: ");
-    scanf("%s", name_buffer);
+    scanf("%32[0-9a-zA-Z ]", name_buffer);
     printf("Zadajte heslo: ");
-    scanf("%32s", pass_buffer);
+    scanf("%32[0-9a-zA-Z ]", pass_buffer);
 
     user_t* user = login(name_buffer, pass_buffer);
 
@@ -86,10 +97,13 @@ int main(int argc, const char** args) {
     printf("Vitaj %s, tvoj level je %d\n", user->username, user->level);
 
     const char command[128] = {0};
-    while (strcmp(command, "exit") != 0) {
+    while (1) {
         printf("> ");
-        scanf("%128s", command);
-        process_cmd(user, command);
+        scanf("%128[0-9a-zA-Z ]", command);
+
+        if(process_cmd(user, command)) {
+            return 0;
+        }
     }
 
     return 0;
