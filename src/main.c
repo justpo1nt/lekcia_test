@@ -28,10 +28,12 @@ user_t* login(const char* username, const char* password) {
 
     while (users[i].username != 0) {
         if (strcmp(users[i].username, username) != 0) {
+            i++;
             continue;
         }
 
         if (strcmp(users[i].password, password) != 0) {
+            i++;
             continue;
         }
 
